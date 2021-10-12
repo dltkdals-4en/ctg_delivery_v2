@@ -1,0 +1,41 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>simpleMap</title>
+    <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=l7xx33dbed536be1496fbafed741d15fa744"></script>
+    <script type="text/javascript">
+
+    var map, marker;
+	function initTmap(){
+	window.addEventListener('flutterInAppWebViewPlatformReady', function(event){
+          window.flutter_inappwebview.callHandler('setposition')
+          .then(function(result){
+              var f_data =result;
+	     map = new Tmapv2.Map("map_div",
+	    	{
+	    		center: new Tmapv2.LatLng(f_data[0].lat,f_data[0].lng), // 지도 초기 좌표
+	    		width: "100%",
+	    		height: "100%",
+	    		zoom: 15
+	    	});
+                  for(var i=0; i<f_data.length; i++){
+                      var lonlat = new Tmapv2.LatLng(f_data[i].lat, f_data[i].lng);
+                      var title = f_data[i].title;
+                      marker = new Tmapv2.Marker({
+                          position: lonlat,
+                          map: map,
+                          title: title
+                      });
+                 }
+                  map.setZoom(15);
+              });
+              });
+	}
+
+		</script>
+</head>
+<body onload="initTmap()">
+<div id="map_div">
+</div>
+</body>
+</html>

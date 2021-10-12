@@ -1,0 +1,263 @@
+<html>
+<header>
+    <meta content='width=device-width, initial-scale=1.0, user-scalable=yes\'>
+    <style>
+		.customoverlay {position:relative;bottom:70px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;}
+		.customoverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
+		.customoverlay a {display:block;text-decoration:none;color:#000;text-align:center;border-radius:6px;font-size:14px;font-weight:bold;overflow:hidden;}
+		.customoverlay .title {display:block;text-align:center;background:#fff;margin-right:35px;padding:10px 15px;font-size:14px;font-weight:bold;}
+		.customoverlay:after {content:'';position:absolute;margin-left:-12px;left:50%;bottom:-12px;width:22px;height:12px;background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
+
+
+    </style>
+</header>
+
+<body style="padding:0; margin:0;">
+<div id='map' style="width:100%;height:100%;"></div>
+<script type="text/javascript"
+        src='https://dapi.kakao.com/v2/maps/sdk.js?appkey=3904951751d78b488b357abb519089ef'></script>
+<script>
+
+		window.addEventListener('flutterInAppWebViewPlatformReady', function(event){
+		      window.flutter_inappwebview.callHandler('setposition')
+		      .then(function(result){
+		            console.log('result'+ result);
+		            console.log(typeof result);
+		            console.log('center: '+ center);
+		             var positions =[];
+		             positions =result;
+		             console.log('poistion: '+positions);
+		             var container = document.getElementById('map');
+		             var selected =null;
+		             var linePath=[];
+
+		             var options = {
+		             	center: new kakao.maps.LatLng(positions[center].lat,positions[center].lng),
+		             	level: 6
+		             };
+		               console.log(positions[1].lat);
+		         var map = new kakao.maps.Map(container, options);
+
+		             console.log(map.toString());
+
+		             var zoomControl = new kakao.maps.ZoomControl();
+		             var mapTypeControl = new kakao.maps.MapTypeControl();
+		               map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+		               map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+		             var imageSrc = '../images/';
+		             var imageSrc2 = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'
+		             var imageSize = new kakao.maps.Size(35, 35);
+		             var iwRemoveable = true;
+		             var pin='';
+		             var end = positions.length-1;
+
+
+		             for(var i=0; i< positions.length; i++){
+		                var color;
+		                switch (positions[i].state){
+		                  case 0 : color='#ffeb00'; pin = 'markerStandby.png'; break;
+		                  case 10: color= '#ec2e2e'; pin = 'markerFail.png'; break;
+		                  case 11: color= '#2da008'; pin = 'markerComplete.png'; break;
+		                  case 20: color= '#001fff'; pin = 'markerStart.png'; break;
+		                }
+		                var contents = '<div class="customoverlay">' +
+		                               '  <a href="javascript:void(0)" id="'+positions[i].id+'" onclick="click();"  style="background: '+color+' url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center;">' +
+		                               '    <span class="title">'+positions[i].title+'</span>' +
+		                               '  </a>' +
+		                               '</div>';
+
+		                if(i==center){
+		                   var markerImage = new kakao.maps.MarkerImage(imageSrc+pin, imageSize);
+		                   var marker = new kakao.maps.Marker({
+		                         map: map,
+		                         position: new kakao.maps.LatLng(positions[i].lat, positions[i].lng),
+		                         title : positions[i].title,
+		                         image : markerImage,
+		                         clickable: true,
+		                         });
+		                         var overlay = new kakao.maps.CustomOverlay({
+		                         content: contents,
+		                         map:map,
+		                         clickable: true,
+		                         position: marker.getPosition(),
+
+		                         });
+		                selected = overlay;
+
+
+		                }else if(i==end){
+		                    var markerImage = new kakao.maps.MarkerImage("../images/pin_blue.png", imageSize);
+		                   var marker = new kakao.maps.Marker({
+		                         map: map,
+		                         position: new kakao.maps.LatLng(positions[i].lat, positions[i].lng),
+		                         title : positions[i].title,
+		                         image : markerImage,
+		                         clickable: true,
+		                         });
+		                   var overlay = new kakao.maps.CustomOverlay({
+		                   content: contents,
+		                   clickable: true,
+		                   position: marker.getPosition(),
+		                    });
+		                }else{
+		                   var markerImage = new kakao.maps.MarkerImage(imageSrc+pin, imageSize);
+		                   var marker = new kakao.maps.Marker({
+		                         map: map,
+		                         position: new kakao.maps.LatLng(positions[i].lat, positions[i].lng),
+		                         title : positions[i].title,
+		                         image : markerImage,
+		                         clickable: true,
+		                         });
+		                   var overlay = new kakao.maps.CustomOverlay({
+		                   content: contents,
+		                   clickable: true,
+		                   position: marker.getPosition(),
+
+		                });
+
+		                }
+		                var infowindow = new kakao.maps.InfoWindow({
+		                         content:contents,
+
+		                });
+
+
+
+		                kakao.maps.event.addListener(marker, 'click',addOverlay(overlay,positions[i].title) );
+
+		             }
+                      function click(){
+                      console.log('test');
+                      }
+
+		              function goNavi(title){
+		                return function(){
+		                console.log('goNavi!'+title);
+		                window.flutter_inappwebview.callHandler('gotoNavi', title);
+		                }
+		              }
+
+
+		              function addOverlay(overlay,title){
+		                 return function(){
+		                    if(selected == null){
+		                    overlay.setMap(map);
+		                    selected= overlay;
+                             map.setCenter(overlay.getPosition());
+		                    }else if(selected !== overlay){
+		                        selected.setMap(null);
+
+		                        overlay.setMap(map);
+		                        selected = overlay;
+
+                                map.setCenter(overlay.getPosition());
+		                    }else if(selected !== null && selected == overlay){
+
+
+		                       selected.setMap(null);
+		                       selected= null;
+		                    }
+		                     window.flutter_inappwebview.callHandler('getPost', title);
+		                 }
+		              }
+		                //선긋기
+
+		                 var linePath=[];
+		                 var lineState=[];
+		                 for(var i = 0 ; i<positions.length; i++){
+		                   linePath.push(new kakao.maps.LatLng(positions[i].lat, positions[i].lng));
+		                   lineState.push(positions[i].state);
+
+		                 }
+		                 var polyline = new kakao.maps.Polyline({
+		                            path: linePath, // 선을 구성하는 좌표배열 입니다
+		                            strokeWeight: 8, // 선의 두께 입니다
+		                            endArrow: true,
+		                            strokeColor: '#ffffff', // 선의 색깔입니다
+		                            strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+		                            strokeStyle: 'solid' // 선의 스타일입니다
+		                        });
+		                        polyline.setMap(map);
+
+		                 console.log(linePath);
+		                 console.log(lineState);
+		                 console.log(now);
+
+		                if(now == -1){
+		                 for(var i = 0 ; i<positions.length-1; i++){
+		                 var j= i+1;
+		                 if(i==positions.length-2){
+		                    var polyline = new kakao.maps.Polyline({
+		                        path: [new kakao.maps.LatLng(positions[i].lat, positions[i].lng),new kakao.maps.LatLng(positions[j].lat, positions[j].lng)], // 선을 구성하는 좌표배열 입니다
+		                        strokeWeight: 5, // 선의 두께 입니다
+		                        endArrow: true,
+		                        strokeColor: '#5a96ff', // 선의 색깔입니다
+		                        strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+		                        strokeStyle: 'solid' // 선의 스타일입니다
+		                    });
+		                    polyline.setMap(map);
+		                    var polyline = new kakao.maps.Polyline({
+		                        path: [new kakao.maps.LatLng(positions[i].lat, positions[i].lng),new kakao.maps.LatLng(positions[j].lat, positions[j].lng)], // 선을 구성하는 좌표배열 입니다
+		                        strokeWeight: 3, // 선의 두께 입니다
+		                        endArrow: true,
+		                        strokeColor: '#ffffff', // 선의 색깔입니다
+		                        strokeOpacity: 0.6, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+		                        strokeStyle: 'dot' // 선의 스타일입니다
+		                    });
+		                    polyline.setMap(map);
+		                 }else{
+		                     var polyline = new kakao.maps.Polyline({
+		                        path: [new kakao.maps.LatLng(positions[i].lat, positions[i].lng),new kakao.maps.LatLng(positions[j].lat, positions[j].lng)], // 선을 구성하는 좌표배열 입니다
+		                        strokeWeight: 4, // 선의 두께 입니다
+		                        endArrow: false,
+		                        strokeColor: '#a8a8a8', // 선의 색깔입니다
+		                        strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+		                        strokeStyle: 'solid' // 선의 스타일입니다
+		                         });
+		                     polyline.setMap(map);
+		                        }
+		                 }
+		                }else{
+		                    for(var i = 0 ; i<positions.length-1; i++){
+		                      var j= i+1;
+		                             if(i< now-1){
+		                             var polyline = new kakao.maps.Polyline({
+		                                 path: [new kakao.maps.LatLng(positions[i].lat, positions[i].lng),new kakao.maps.LatLng(positions[j].lat, positions[j].lng)], // 선을 구성하는 좌표배열 입니다
+		                                 strokeWeight: 4, // 선의 두께 입니다
+		                                 endArrow: true,
+		                                 strokeColor: '#a8a8a8', // 선의 색깔입니다
+		                                 strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+		                                 strokeStyle: 'solid' // 선의 스타일입니다
+		                             });
+		                             polyline.setMap(map);
+		                             }else{
+		                               var polyline = new kakao.maps.Polyline({
+                                            path: [new kakao.maps.LatLng(positions[i].lat, positions[i].lng),new kakao.maps.LatLng(positions[j].lat, positions[j].lng)], // 선을 구성하는 좌표배열 입니다
+                                            strokeWeight: 5, // 선의 두께 입니다
+                                            endArrow: true,
+                                            strokeColor: '#5a96ff', // 선의 색깔입니다
+                                            strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+                                            strokeStyle: 'solid' // 선의 스타일입니다
+                                        });
+		                                 polyline.setMap(map);
+		                                 var polyline = new kakao.maps.Polyline({
+		                                     path: [new kakao.maps.LatLng(positions[i].lat, positions[i].lng),new kakao.maps.LatLng(positions[j].lat, positions[j].lng)], // 선을 구성하는 좌표배열 입니다
+		                                     strokeWeight: 3, // 선의 두께 입니다
+		                                     endArrow: true,
+		                                     strokeColor: '#ffffff', // 선의 색깔입니다
+		                                     strokeOpacity: 0.6, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+		                                     strokeStyle: 'dot' // 선의 스타일입니다
+		                                 });
+		                                 polyline.setMap(map);
+		                             }
+		                        }
+		                }
+
+		      });
+		    });
+
+
+</script>
+</body>
+
+</html>

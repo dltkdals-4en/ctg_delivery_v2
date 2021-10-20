@@ -109,17 +109,28 @@ class _TodoCardState extends State<TodoCard> {
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '${data['location_name']}',
+                          TodoProvider.nameSpilt(data, 'forward'),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: CoColor.coBlack,
                             fontSize: 16,
                           ),
                         ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          TodoProvider.nameSpilt(data, 'behind'),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: CoColor.coGrey3,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const Expanded(child: SizedBox()),
                         TodoProvider.stateText(data['pick_state'], 'todo'),
                       ],
                     ),
@@ -136,11 +147,12 @@ class _TodoCardState extends State<TodoCard> {
                               radius: 42.5,
                               backgroundColor: CoColor.coGrey5,
                               child: CircleAvatar(
-                                backgroundImage: (data['location_postal'] !=
-                                        null)
-                                    ? NetworkImage("${data['location_postal']}")
-                                    : const NetworkImage(
-                                        'https://picsum.photos/200/300'),
+                                backgroundImage: checkImage(data),
+                                // (data['location_postal'] != null)
+                                //     ? NetworkImage(
+                                //         "${data['location_postal']}")
+                                //     : const NetworkImage(
+                                //         'https://picsum.photos/200/300'),
                                 radius: 42,
                               ),
                             ),
@@ -320,6 +332,16 @@ class _TodoCardState extends State<TodoCard> {
       uiContents2Color = CoColor.coRed;
     }
   }
+
+  checkImage(data) {
+    if (data['location_name'] == '대림창고(성수)') {
+      return const AssetImage('assets/images/daerim.jpg');
+    } else {
+      return NetworkImage("${data['location_postal']}");
+    }
+  }
+
+
 }
 
 String dateFormat(date) {

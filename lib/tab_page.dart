@@ -1,9 +1,5 @@
-import 'package:ctg_delivery_v2/main.dart';
-import 'package:ctg_delivery_v2/todo_provider.dart';
 import 'package:ctg_delivery_v2/todo_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import 'map_screen.dart';
 
 class TabPage extends StatefulWidget {

@@ -282,13 +282,44 @@ class TodoProvider with ChangeNotifier {
     return Container();
   }
 
+  static String nameSpilt(data, compose) {
+    String originString = data['location_name'];
+    String parseData = '(';
+    String parseString = '';
+    if (originString.contains('(')) {
+      var parseText = originString.indexOf(parseData);
+      switch (compose) {
+        case 'forward':
+          parseString = originString.substring(0, parseText);
+          break;
+        case 'behind':
+          parseString =
+              originString.substring(parseText + 1, originString.length - 1);
+          break;
+      }
+      return parseString;
+    } else {
+      (compose == 'forward') ? parseString = originString : parseString = '';
+
+      return parseString;
+    }
+  }
+
+  static checkImage(data) {
+    if (data['location_name'] == '대림창고(성수)') {
+      return const AssetImage('assets/images/daerim.jpg');
+    } else {
+      return NetworkImage("${data['location_postal']}");
+    }
+  }
+
   int mapLocId = 0;
   int mapIndex = 0;
+
   void changeMapIndex(i) {
     print('qweqweqwe $i');
     mapLocId = i;
-    (mapIndex <1)?mapIndex=0: mapIndex = i-1;
+    (mapIndex < 1) ? mapIndex = 0 : mapIndex = i - 1;
     notifyListeners();
   }
-
 }

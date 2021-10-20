@@ -7,9 +7,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'collect_screen.dart';
+import 'contstants/color.dart';
 import 'fail_screen.dart';
 
 class MapScreen extends StatefulWidget {
@@ -27,10 +29,11 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+  final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
   final double _initFabHeight = 120.0;
   double _fabHeight = 0;
-  double _panelHeightOpen = 0;
-  final double _panelHeightClosed = 20;
+  final double _panelHeightOpen = 236;
+  final double _panelHeightClosed = 10;
   int mapCardIndex = 0;
   InAppWebViewController? webViewController;
   List position = [];
@@ -63,16 +66,27 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  getPosition() {
+  getPosition() async{
+     var nowLoc= await _geolocatorPlatform.getCurrentPosition();
+     print(nowLoc);
+    print(position);
     if (position.isEmpty) {
+      print('asd');
       for (int i = 0; i < widget.mapList.length; i++) {
-        position.add({
-          'title': widget.mapList[i]['location_name'],
-          'lat': widget.mapList[i]['location_gps_lat'],
-          'lng': widget.mapList[i]['location_gps_long'],
-          'state': widget.mapList[i]['pick_state'],
-          'id': widget.mapList[i]['pick_id'],
-        });
+        if( i==0){
+            position.add({
+              'title' : '현재 위치',
+
+            });
+        }else {
+          position.add({
+            'title': widget.mapList[i]['location_name'],
+            'lat': widget.mapList[i]['location_gps_lat'],
+            'lng': widget.mapList[i]['location_gps_long'],
+            'state': widget.mapList[i]['pick_state'],
+            'id': widget.mapList[i]['pick_id'],
+          });
+        }
       }
       print(position);
     }
@@ -94,31 +108,32 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<TodoProvider>(context);
-    _panelHeightOpen = MediaQuery.of(context).size.height * 0.3;
+    // _panelHeightOpen = MediaQuery.of(context).size.height * 0.30;
     var data = widget.mapList[mapCardIndex];
 
-    return Material(
-      child: Stack(
-        alignment: Alignment.topCenter,
-        children: <Widget>[
-          SlidingUpPanel(
-            defaultPanelState: PanelState.OPEN,
-            maxHeight: _panelHeightOpen,
-            minHeight: 30,
-            parallaxEnabled: false,
-            parallaxOffset: .5,
-            body: _body(webViewController),
-            panelBuilder: (sc) => _panel(sc, data),
-            // MapCard(sc, widget.mapList, mapCardIndex),
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(18.0),
-                topRight: Radius.circular(18.0)),
-            onPanelSlide: (double pos) => setState(() {
-              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
-                  _initFabHeight;
-            }),
-          ),
-        ],
+    return SafeArea(
+      child: Material(
+        child: Stack(
+          alignment: Alignment.topCenter,
+          children: <Widget>[
+            SlidingUpPanel(
+              defaultPanelState: PanelState.CLOSED,
+              maxHeight: _panelHeightOpen,
+              minHeight: 30,
+              parallaxEnabled: false,
+              parallaxOffset: .5,
+              body: _body(webViewController),
+              panelBuilder: (sc) => _panel(sc, data),
+              // MapCard(sc, widget.mapList, mapCardIndex),
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(18.0),
+                  topRight: Radius.circular(18.0)),
+              onPanelSlide: (double pos) => setState(() {
+                _fabHeight = pos * (_panelHeightOpen - 0) + _initFabHeight;
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -147,14 +162,27 @@ class _MapScreenState extends State<MapScreen> {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    data['location_name'],
+                    TodoProvider.nameSpilt(data, 'forward'),
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    TodoProvider.nameSpilt(data, 'behind'),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: CoColor.coGrey3,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const Expanded(child: SizedBox()),
                   TodoProvider.stateText(data['pick_state'], 'map'),
                 ],
               ),
@@ -170,7 +198,10 @@ class _MapScreenState extends State<MapScreen> {
                       radius: 50,
                       backgroundColor: Color(0xFFDDDDDD),
                       child: CircleAvatar(
-                        backgroundImage: setImage(),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(49),
+                          child: setImage(),
+                        ),
                         backgroundColor: Colors.white,
                         radius: 49,
                       ),
@@ -270,8 +301,8 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                           style: ElevatedButton.styleFrom(
                             side: const BorderSide(
-                                width: 1, color: Color(0xFF5A96FF)),
-                            primary: Color(0xFF5A96FF),
+                                width: 1, color: CoColor.coPrimary),
+                            primary: CoColor.coPrimary,
                             elevation: 0,
                           )),
                     ),
@@ -285,20 +316,39 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  ImageProvider? setImage() {
+  Image setImage() {
     var data = widget.mapList[mapCardIndex];
-    print(data['location_name']);
+
     if (data['location_name'] == '포이엔') {
-      postalImage = AssetImage('assets/images/4en_logo_2021.png');
+      return Image.asset(
+        'assets/images/4enLogo2.png',
+        fit: BoxFit.cover,
+      );
     } else if (data['location_name'] == '집하') {
+      return Image.asset(
+        'assets/images/4en.jpg',
+        fit: BoxFit.cover,
+      );
       postalImage = AssetImage('assets/images/4en.jpg');
+    } else if (data['location_name'] == '대림창고(성수)') {
+      return Image.asset(
+        'assets/images/daerim.jpg',
+        fit: BoxFit.cover,
+        width: 98,
+        height: 98,
+      );
+      postalImage = AssetImage('assets/images/daerim.jpg');
     } else if (data['location_postal'] != null) {
-      postalImage = NetworkImage("${data['location_postal']}");
+      return Image.network(
+        '${data['location_postal']}',
+        fit: BoxFit.cover,
+      );
     } else {
-      postalImage = const NetworkImage('https://picsum.photos/200/300');
+      return Image.network(
+        '${data['location_postal']}',
+        fit: BoxFit.cover,
+      );
     }
-    print(postalImage);
-    return postalImage;
   }
 
   Widget _body(inAppWebViewController) {

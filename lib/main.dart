@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:ctg_delivery_v2/contstants/color.dart';
 import 'package:ctg_delivery_v2/database_helper.dart';
+
 import 'package:ctg_delivery_v2/splash_page.dart';
 import 'package:ctg_delivery_v2/tab_page.dart';
 import 'package:ctg_delivery_v2/todo_provider.dart';
@@ -10,6 +11,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
+
+import 'login/permission_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +29,7 @@ Future<void> main() async {
         ChangeNotifierProvider<DbHelper>(
           create: (_) => DbHelper(),
         ),
+
       ],
       child: MyApp(),
     ),
@@ -118,12 +122,12 @@ class _HomePageState extends State<HomePage>
           IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
-              for (int i = 0; i < mapList.length; i++) {
-                print(mapList[i]['pick_state']);
-              }
-              // for(int i in todoList) {
-              //   print(todoList[i]);
-              // }
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PermissionScreen(),
+                  ));
+
             },
             color: Colors.grey,
           ),
@@ -134,16 +138,19 @@ class _HomePageState extends State<HomePage>
             Tab(
               child: Text('일정',
                   style: TextStyle(
-                      color: Color(0xFF5A96FF), fontWeight: FontWeight.bold)),
+                       fontWeight: FontWeight.bold)),
             ),
             Tab(
               child: Text('지도',
                   style: TextStyle(
-                      color: Color(0xFF5A96FF), fontWeight: FontWeight.bold)),
+                       fontWeight: FontWeight.bold)),
             )
           ],
+          labelColor: CoColor.coPrimary,
+          unselectedLabelColor: CoColor.coGrey3,
         ),
         backgroundColor: Colors.white,
+
       ),
       body:
           TabPage(tab, todoList, mapList, finalCard)

@@ -14,7 +14,7 @@ class DbHelper with ChangeNotifier {
   Future<Database> init() async {
     var dbPath = await getDatabasesPath();
 
-    var path = join(dbPath, 'ctgdb6.db');
+    var path = join(dbPath, 'ctgdb7.db');
 
     bool dbExists = await databaseExists(path);
 

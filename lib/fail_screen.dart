@@ -42,6 +42,7 @@ class _FailScreenState extends State<FailScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     final Size size = MediaQuery.of(context).size;
     return Stack(
       children: [
@@ -84,7 +85,7 @@ class _FailScreenState extends State<FailScreen> {
                               visible: _visible,
                               child: SizedBox(
                                 height: 200,
-                                child: TextFormField(
+                                child: TextField(
                                   controller: _controller,
                                   cursorColor: CoColor.coPrimary,
                                   style: TextStyle(color: CoColor.coBlack),
@@ -98,8 +99,6 @@ class _FailScreenState extends State<FailScreen> {
                                     fillColor: CoColor.coGrey5,
                                     filled: true,
                                   ),
-                                  minLines: 3,
-                                  maxLines: 4,
                                   focusNode: _focusNode,
                                 ),
                               ),
@@ -160,7 +159,7 @@ class _FailScreenState extends State<FailScreen> {
                         var failReason = '';
                         if (_value == 3) {
                           failReason = _controller.text;
-                        }else{
+                        } else {
                           failReason = failList[_value]['reason'];
                         }
 
@@ -169,7 +168,9 @@ class _FailScreenState extends State<FailScreen> {
                         DbHelper().updateFail(
                             widget.data['pick_id'], failCode, failReason);
                         Navigator.of(context).pop();
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage(),));
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => HomePage(),
+                        ));
                       },
                       child: const SizedBox(
                         height: 50,

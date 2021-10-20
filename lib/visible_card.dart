@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class VisibleCard extends StatefulWidget {
   const VisibleCard(this.finalCard, {Key? key}) : super(key: key);
@@ -15,7 +16,7 @@ class _VisibleCardState extends State<VisibleCard> {
     var textFactor = MediaQuery.of(context).textScaleFactor;
     var data = widget.finalCard[0];
     return Card(
-      elevation: 1,
+      elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
@@ -28,13 +29,17 @@ class _VisibleCardState extends State<VisibleCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '${data['location_name']}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.start,
+                Row(
+                  children: [
+                    Text(
+                      '${data['location_name']}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
                 ),
                 const Divider(
                   color: Colors.grey,
@@ -87,7 +92,10 @@ class _VisibleCardState extends State<VisibleCard> {
                                             180) /
                                         2,
                                     child: ElevatedButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          launch(
+                                              "tel://${data['location_tel']}");
+                                        },
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           mainAxisAlignment:
@@ -123,7 +131,10 @@ class _VisibleCardState extends State<VisibleCard> {
                                             180) /
                                         2,
                                     child: ElevatedButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          launch(
+                                              'https://map.kakao.com/link/to/${data['location_name']},${data['location_gps_lat']},${data['location_gps_long']}');
+                                         },
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           mainAxisAlignment:

@@ -52,6 +52,7 @@ dependencies:
   geolocator: ^7.7.0
   flutter_swiper_null_safety: ^1.0.2
   sms_autofill: ^2.2.0
+  fluttertoast: ^8.0.8
 
 
 dev_dependencies:

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:ctg_delivery_v2/contstants/color.dart';
 import 'package:ctg_delivery_v2/database_helper.dart';
+import 'package:ctg_delivery_v2/my_page_screen.dart';
 
 import 'package:ctg_delivery_v2/splash_page.dart';
 import 'package:ctg_delivery_v2/tab_page.dart';
@@ -125,7 +126,7 @@ class _HomePageState extends State<HomePage>
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PermissionScreen(),
+                    builder: (context) => MyPageScreen(),
                   ));
 
             },

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ctg_delivery_v2/contstants/color.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen(this.phoneNumber, {Key? key}) : super(key: key);
@@ -12,6 +13,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  FToast? fToast;
   TextEditingController t = TextEditingController();
   Timer? _smsTimer;
   Timer? _resendTimer;
@@ -26,7 +28,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     setSmsTimer();
-
+    fToast = FToast();
+    fToast!.init(context);
     super.initState();
   }
 
@@ -78,6 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -147,11 +151,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                 setSmsTimer();
                                 setResendTimer();
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                   SnackBar(
-                                    content: Text('${30-resend}초 후 다시 시도하세요.'),
-                                  ),
-                                );
+                                customToast(size);
+                                // Fluttertoast.showToast(
+                                //   msg: '${30 - resend}초 후 다시 시도하세요.',
+                                //   gravity: ToastGravity.CENTER,
+                                //   backgroundColor: CoColor.coGrey1,
+                                //   toastLength: Toast.LENGTH_LONG,
+                                //   textColor: Colors.white,
+                                // );
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -176,20 +183,31 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const Expanded(child: SizedBox()),
                 Center(
-                    child: Text(
-                  '로그인 문제 해결 > $resend',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                )),
+                  child: TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      '로그인 문제 해결 >',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: CoColor.coBlack),
+                    ),
+                  ),
+                ),
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginScreen(widget.phoneNumber),
-                        ));
+                    if(t.text.isEmpty){
+                      setState(() {
+                        smsText = '*정확한 인증번호를 입력해주세요.';
+                        smsTextColor = CoColor.coRed;
+                      });
+                    }
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => LoginScreen(widget.phoneNumber),
+                    //     ));
                   },
                   style: ElevatedButton.styleFrom(
                     side: const BorderSide(width: 1, color: CoColor.coPrimary),
@@ -201,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 60,
                     child: const Center(
                       child: Text(
-                        '다음',
+                        '확인',
                         style: TextStyle(
                           fontSize: 18,
                         ),
@@ -214,6 +232,36 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void customToast(size) {
+    Widget toast = Container(
+      width: size.width - 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: CoColor.coGrey1,
+      ),
+      height: 45,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Text(
+            '${30 - resend}초 후 다시 시도하세요.',
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
+        ),
+      ),
+    );
+    fToast!.showToast(
+      child: toast,
+      positionedToastBuilder: (context, child) {
+        return Positioned(
+          child: child,
+          bottom: 120,
+          left: 20,
+        );
+      },
     );
   }
 }

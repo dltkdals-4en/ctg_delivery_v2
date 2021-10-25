@@ -11,6 +11,10 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   bool _visible = false;
+  bool marketingEmail = false;
+  bool marketingSms = false;
+  bool darkMode = false;
+  bool onlyWifi = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,17 +25,18 @@ class _SettingScreenState extends State<SettingScreen> {
           '환경설정',
           style: TextStyle(
             color: CoColor.coBlack,
+            fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: CoColor.coBlack),
       ),
-      body: Column(
-        children: [
-          Container(
-            color: Colors.white,
-            child: Padding(
+      body: Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,6 +72,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                   _visible = !_visible;
                                 });
                               },
+                              activeColor: CoColor.coPrimary,
                             )
                           ],
                         ),
@@ -96,12 +102,13 @@ class _SettingScreenState extends State<SettingScreen> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   CupertinoSwitch(
-                                    value: _visible,
+                                    value: marketingEmail,
                                     onChanged: (value) {
                                       setState(() {
-                                        _visible = !_visible;
+                                        marketingEmail = value;
                                       });
                                     },
+                                    activeColor: CoColor.coPrimary,
                                   )
                                 ],
                               ),
@@ -120,12 +127,13 @@ class _SettingScreenState extends State<SettingScreen> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   CupertinoSwitch(
-                                    value: _visible,
+                                    value: marketingSms,
                                     onChanged: (value) {
                                       setState(() {
-                                        _visible = !_visible;
+                                        marketingSms = value;
                                       });
                                     },
+                                    activeColor: CoColor.coPrimary,
                                   )
                                 ],
                               ),
@@ -143,9 +151,10 @@ class _SettingScreenState extends State<SettingScreen> {
                     height: 20,
                   ),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '알림',
+                        '기타 설정',
                         style: TextStyle(
                             fontSize: 14,
                             color: CoColor.coGrey4,
@@ -158,29 +167,68 @@ class _SettingScreenState extends State<SettingScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '푸시 알림 설정',
+                            '다크모드',
                             style: TextStyle(
                                 fontSize: 16,
                                 color: CoColor.coBlack,
                                 fontWeight: FontWeight.bold),
                           ),
                           CupertinoSwitch(
-                            value: _visible,
+                            value: darkMode,
                             onChanged: (value) {
                               setState(() {
-                                _visible = !_visible;
+                                darkMode = value;
                               });
                             },
+                            activeColor: CoColor.coPrimary,
                           )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'WiFi에서만 사용',
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: CoColor.coBlack,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          CupertinoSwitch(
+                            value: onlyWifi,
+                            onChanged: (value) {
+                              setState(() {
+                                onlyWifi = value;
+                              });
+                            },
+                            activeColor: CoColor.coPrimary,
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            '캐시 데이터 관리',
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: CoColor.coBlack,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ],
                       ),
                     ],
                   )
                 ],
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

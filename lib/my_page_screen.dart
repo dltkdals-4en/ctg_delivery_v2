@@ -1,3 +1,4 @@
+import 'package:ctg_delivery_v2/previous_history.dart';
 import 'package:ctg_delivery_v2/setting_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class MyPageScreen extends StatelessWidget {
           '마이페이지',
           style: TextStyle(
             color: CoColor.coBlack,
+            fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: Colors.white,
@@ -29,7 +31,8 @@ class MyPageScreen extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => SettingScreen(),
                     ));
-              }, icon: Image.asset('assets/images/setting.png'))
+              },
+              icon: Image.asset('assets/images/setting.png'))
         ],
       ),
       body: Column(
@@ -171,20 +174,26 @@ class MyPageScreen extends StatelessWidget {
           Container(
             color: Colors.white,
             child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Image.asset('assets/images/myPageBefore.png'),
-                  SizedBox(
-                    width: 10,
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: ListTile(
+                title: const Text(
+                  '이전 수거내역',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
-                  Text(
-                    '이전 수거내역',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                ],
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PreviousHistory(),
+                      ));
+                },
+                minLeadingWidth: 0,
+                contentPadding: EdgeInsets.all(0),
+                leading: Container(
+                    child: Image.asset('assets/images/myPageBefore.png')),
               ),
             ),
           ),
@@ -198,70 +207,63 @@ class MyPageScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.asset('assets/images/myPagePolicy.png'),
-                        SizedBox(
-                          width: 10,
+                    ListTile(
+                      title: const Text(
+                        '약관 및 정책',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                         ),
-                        Text(
-                          '약관 및 정책',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                      ],
+                      ),
+                      onTap: () {},
+                      minLeadingWidth: 0,
+                      contentPadding: EdgeInsets.all(0),
+                      leading: Container(
+                          child: Image.asset('assets/images/myPagePolicy.png')),
                     ),
-                    SizedBox(
-                      height: 40,
+                    ListTile(
+                      title: const Text(
+                        '공지사항',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      onTap: () {},
+                      minLeadingWidth: 0,
+                      contentPadding: EdgeInsets.all(0),
+                      leading: Container(
+                          child: Image.asset('assets/images/myPageNotice.png')),
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.asset('assets/images/myPageNotice.png'),
-                        SizedBox(
-                          width: 10,
+                    ListTile(
+                      title: const Text(
+                        '고객센터',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                         ),
-                        Text(
-                          '공지사항',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                      ],
+                      ),
+                      onTap: () {},
+                      minLeadingWidth: 0,
+                      contentPadding: EdgeInsets.all(0),
+                      leading: Container(
+                          child:
+                              Image.asset('assets/images/myPageService.png')),
                     ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.asset('assets/images/myPageService.png'),
-                        SizedBox(
-                          width: 10,
+                    ListTile(
+                      title: const Text(
+                        '현재 버전 2.7.4',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                         ),
-                        Text(
-                          '고객센터',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.asset('assets/images/myPageVersion.png'),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          '현재 버전 2.7.4',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                      ],
+                      ),
+                      onTap: () {},
+                      minLeadingWidth: 0,
+                      contentPadding: EdgeInsets.all(0),
+                      leading: Container(
+                          child:
+                              Image.asset('assets/images/myPageVersion.png')),
                     ),
                   ],
                 ),

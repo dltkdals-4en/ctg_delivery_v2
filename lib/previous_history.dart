@@ -12,7 +12,10 @@ class PreviousHistory extends StatefulWidget {
 
 class _PreviousHistoryState extends State<PreviousHistory> {
   List DateList = [];
-  var _selectedValue = DateFormat('yyyy년MM월').format(DateTime.now());
+  var _selectedValue = '';
+  var selectedDate = DateTime.now();
+  int selectedDay = 0;
+  int lastDay = 0;
 
   @override
   void initState() {
@@ -28,17 +31,21 @@ class _PreviousHistoryState extends State<PreviousHistory> {
   }
 
   void setDateList() {
-    var now = DateTime.now();
     for (int i = 0; i < 36; i++) {
-      DateList.add(
-          DateFormat('yyyy년MM월').format(DateTime(now.year, now.month - i)));
+      DateList.add(DateFormat('yyyy년MM월')
+          .format(DateTime(selectedDate.year, selectedDate.month - i)));
     }
-    String formatYearMonth = DateFormat('yyyy년MM월').format(now);
-    String formatDay = DateFormat('dd일').format(now);
-    print(now);
+    String formatYearMonth = DateFormat('yyyy년MM월').format(selectedDate);
+    setState(() {
+      selectedDay = selectedDate.day;
+      _selectedValue = formatYearMonth;
+      (selectedDate.month < 12)
+          ? lastDay = DateTime(selectedDate.year, selectedDate.month + 1, 0).day
+          : lastDay = DateTime(selectedDate.year + 1, 1, 0).day;
+    });
     print(formatYearMonth);
     print(DateList);
-    print(formatDay);
+    print(lastDay);
   }
 
   @override
@@ -64,6 +71,7 @@ class _PreviousHistoryState extends State<PreviousHistory> {
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   DropdownButton(
                     value: _selectedValue,
@@ -79,6 +87,16 @@ class _PreviousHistoryState extends State<PreviousHistory> {
                         _selectedValue = value.toString();
                       });
                     },
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {}, icon: Icon(Icons.arrow_back_ios)),
+                      Text('$selectedDay일'),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.arrow_forward_ios)),
+                    ],
                   ),
                 ],
               ),

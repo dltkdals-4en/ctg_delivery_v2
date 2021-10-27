@@ -35,6 +35,13 @@ class DbHelper with ChangeNotifier {
         'select * from waste_location l, pick_task p where l.location_id = p.location_id and (p.pick_state not in (20,21)) order by p.pick_order');
   }
 
+  Future<void> getCardList() async {
+    final db = await init();
+    cardList = await db.rawQuery(
+        'select * from waste_location l, pick_task p where l.location_id = p.location_id and (p.pick_state not in (20,21)) order by p.pick_order');
+    notifyListeners();
+  }
+
   Future<List<Map<dynamic, dynamic>>> getMapList() async {
     final db = await init();
     return db.rawQuery(
@@ -61,10 +68,10 @@ class DbHelper with ChangeNotifier {
         "update pick_task set pick_state = 10, pick_fail_code = $failCode, pick_fail_reason = '$failReason', pick_up_date = '${DateTime.now()}'  where pick_id = $id");
   }
 
-  Future<void> getCardList() async {
+  Future<void> getPathList() async {
     final db = await init();
-    cardList = await db.rawQuery(
-        'select * from waste_location l, pick_task p where l.location_id = p.location_id and (p.pick_state not in (20,21))');
+    mapList = await db.rawQuery(
+        'select * from waste_location l, pick_task p where l.location_id = p.location_id order by p.pick_order');
     notifyListeners();
   }
 

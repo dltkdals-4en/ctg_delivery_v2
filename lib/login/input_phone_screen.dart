@@ -43,11 +43,11 @@ class _InputPhoneScreenState extends State<InputPhoneScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   '전화번호를 입력해주세요',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 50,
                 ),
                 TextFormField(
@@ -55,7 +55,7 @@ class _InputPhoneScreenState extends State<InputPhoneScreen> {
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderSide:
-                            BorderSide(width: 3, color: CoColor.coPrimary),
+                            const BorderSide(width: 3, color: CoColor.coPrimary),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       hintText: phoneNumber),

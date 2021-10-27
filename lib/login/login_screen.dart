@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: CoColor.coBlack),
-      ),
+      ), 
       body: Container(
         color: Colors.white,
         child: SafeArea(

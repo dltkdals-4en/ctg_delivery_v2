@@ -53,6 +53,8 @@ dependencies:
   flutter_swiper_null_safety: ^1.0.2
   sms_autofill: ^2.2.0
   fluttertoast: ^8.0.8
+  mobile_number: ^1.0.4
+
 
 
 dev_dependencies:
@@ -104,14 +106,17 @@ flutter:
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   fonts:
-    - family: NotoSansKR
+    - family: NotoSans
       fonts:
-        - asset: assets/font/Noto_Sans_KR/NotoSansKR-Regular.otf
-        - asset: assets/font/Noto_Sans_KR/NotoSansKR-Bold.otf
-          weight: 700
+        - asset: assets/font/Noto_Sans_KR/NotoSansKR-Thin.otf
         - asset: assets/font/Noto_Sans_KR/NotoSansKR-Light.otf
+          weight: 300
+        - asset: assets/font/Noto_Sans_KR/NotoSansKR-Regular.otf
+          weight: 400
         - asset: assets/font/Noto_Sans_KR/NotoSansKR-Medium.otf
           weight: 500
+        - asset: assets/font/Noto_Sans_KR/NotoSansKR-Bold.otf
+          weight: 700
         - asset: assets/font/Noto_Sans_KR/NotoSansKR-Black.otf
           weight: 900
   #

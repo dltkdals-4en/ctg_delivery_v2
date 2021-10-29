@@ -1,8 +1,12 @@
 import 'dart:async';
 
 import 'package:ctg_delivery_v2/contstants/color.dart';
+import 'package:ctg_delivery_v2/database_helper.dart';
+import 'package:ctg_delivery_v2/get_data_page.dart';
+import 'package:ctg_delivery_v2/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen(this.phoneNumber, {Key? key}) : super(key: key);
@@ -21,12 +25,16 @@ class _LoginScreenState extends State<LoginScreen> {
   var leftTime;
   var leftMin;
   var leftSec;
+  String verifyNumber = '7777';
   int resend = 0;
   String smsText = '*SMS 재전송은 3회까지 가능합니다.';
   Color smsTextColor = CoColor.coGrey3;
+  UserModel userModel = UserModel();
+  String userName = '';
 
   @override
   void initState() {
+    checkName();
     setSmsTimer();
     fToast = FToast();
     fToast!.init(context);
@@ -41,6 +49,14 @@ class _LoginScreenState extends State<LoginScreen> {
     t.dispose();
     // TODO: implement dispose
     super.dispose();
+  }
+
+  checkName() async {
+    userModel = await DbHelper().getUserInfo(widget.phoneNumber);
+
+    setState(() {
+      userName = userModel.userName!;
+    });
   }
 
   setResendTimer() {
@@ -80,13 +96,14 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    var data = Provider.of<DbHelper>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: CoColor.coBlack),
-      ), 
+      ),
       body: Container(
         color: Colors.white,
         child: SafeArea(
@@ -95,8 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '홍길동님 안녕하세요 :)\n인증번호를 입력해주세요.',
+                Text(
+                  '$userName 님 안녕하세요 :)\n인증번호를 입력해주세요.',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
@@ -197,17 +214,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    if(t.text.isEmpty){
+                    if (t.text.isEmpty || t.text != verifyNumber) {
                       setState(() {
                         smsText = '*정확한 인증번호를 입력해주세요.';
                         smsTextColor = CoColor.coRed;
                       });
+                    } else {
+                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GetDataPage(),
+                          ));
                     }
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => LoginScreen(widget.phoneNumber),
-                    //     ));
                   },
                   style: ElevatedButton.styleFrom(
                     side: const BorderSide(width: 1, color: CoColor.coPrimary),

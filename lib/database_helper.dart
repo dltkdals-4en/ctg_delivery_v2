@@ -1,3 +1,7 @@
+import 'package:ctg_delivery_v2/db_provider.dart';
+import 'package:ctg_delivery_v2/model/todo_card_model.dart';
+import 'package:ctg_delivery_v2/model/user_model.dart';
+import 'package:ctg_delivery_v2/todo_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
@@ -8,13 +12,17 @@ import 'dart:io' as io;
 class DbHelper with ChangeNotifier {
   List cardList = [];
   List mapList = [];
+  List<TodoCardModel> todoList = [];
+  late TabController tab;
+  List user =[];
+  bool isLoading = false;
 
   Future<void> openDB() async {}
 
   Future<Database> init() async {
     var dbPath = await getDatabasesPath();
 
-    var path = join(dbPath, 'ctgdb7.db');
+    var path = join(dbPath, 'ctgdb8.db');
 
     bool dbExists = await databaseExists(path);
 
@@ -35,11 +43,17 @@ class DbHelper with ChangeNotifier {
         'select * from waste_location l, pick_task p where l.location_id = p.location_id and (p.pick_state not in (20,21)) order by p.pick_order');
   }
 
-  Future<void> getCardList() async {
+  Future<List<TodoCardModel>> getCardList() async {
     final db = await init();
     cardList = await db.rawQuery(
         'select * from waste_location l, pick_task p where l.location_id = p.location_id and (p.pick_state not in (20,21)) order by p.pick_order');
+
+    todoList = List.generate(cardList.length, ((i) {
+      return TodoCardModel.fromJson(cardList[i]);
+    }));
+
     notifyListeners();
+    return todoList;
   }
 
   Future<List<Map<dynamic, dynamic>>> getMapList() async {
@@ -72,6 +86,8 @@ class DbHelper with ChangeNotifier {
     final db = await init();
     mapList = await db.rawQuery(
         'select * from waste_location l, pick_task p where l.location_id = p.location_id order by p.pick_order');
+
+    DbProvider().mapList = mapList;
     notifyListeners();
   }
 
@@ -81,5 +97,25 @@ class DbHelper with ChangeNotifier {
         "update pick_task set pick_state = 0 , pick_details = '', pick_total_waste = 0, pick_fail_reason= '', pick_fail_code = 0 where pick_state not in (20,21)");
     db.rawUpdate(
         "update waste_location set last_call_date = '${DateTime.now()}'  where location_id in (select location_id from pick_task where pick_state not in(20,21))");
+  }
+
+  Future<UserModel> getUserInfo(phone) async {
+    final db = await init();
+
+
+    user = await db.rawQuery(
+        "select * from users where user_phone = '$phone'");
+    return UserModel.fromJson(user[0]);
+  }
+  Future<dynamic> findUser(phone) async{
+    final db = await init();
+    var i = await db.rawQuery("select count(*) from users where user_phone = '$phone'");
+
+    return await i[0]['count(*)'];
+  }
+  Future<dynamic> verificationNumber(number, phone) async{
+    final db = await init();
+    var i = await db.rawQuery("select count(*) from users where user_phone = '$phone' and authentication_number = '$number'");
+    return await i[0]['count(*)'];
   }
 }

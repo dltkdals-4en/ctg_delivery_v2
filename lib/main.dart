@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:ctg_delivery_v2/contstants/color.dart';
 import 'package:ctg_delivery_v2/database_helper.dart';
+import 'package:ctg_delivery_v2/get_data_page.dart';
+import 'package:ctg_delivery_v2/login/app_explain.dart';
 import 'package:ctg_delivery_v2/my_page_screen.dart';
 
 import 'package:ctg_delivery_v2/splash_page.dart';
@@ -13,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
 
+import 'db_provider.dart';
 import 'login/permission_screen.dart';
 
 Future<void> main() async {
@@ -30,7 +33,9 @@ Future<void> main() async {
         ChangeNotifierProvider<DbHelper>(
           create: (_) => DbHelper(),
         ),
-
+        ChangeNotifierProvider<DbProvider>(
+          create: (_) => DbProvider(),
+        ),
       ],
       child: MyApp(),
     ),
@@ -47,7 +52,17 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
             fontFamily: 'NotoSansKR',
             iconTheme: const IconThemeData(color: CoColor.coBlack)),
-        home: const HomePage());
+        home: FutureBuilder(
+          future: Future.delayed(
+            Duration(seconds: 3),
+          ),
+          builder: (context, snapshot) {
+            return (snapshot.connectionState == ConnectionState.waiting)
+                ? SplashScreen()
+                :AppExplain();
+                // : GetDataPage();
+          },
+        ));
   }
 }
 
@@ -97,65 +112,60 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    return (!isLoading)?SplashScreen() :Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Center(
-          child: Image.asset(
-            'assets/images/mainLogo.png',
-            fit: BoxFit.cover,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.refresh),
-          onPressed: () {
-            setState(() {
-              isLoading = false;
-            });
+    return (!isLoading)
+        ? SplashScreen()
+        : Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              centerTitle: true,
+              title: Center(
+                child: Image.asset(
+                  'assets/images/mainLogo.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              leading: IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () {
+                  setState(() {
+                    isLoading = false;
+                  });
 
-            DbHelper().dataInitialization();
-            getData();
-          },
-          color: Colors.grey,
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MyPageScreen(),
-                  ));
-
-            },
-            color: Colors.grey,
-          ),
-        ],
-        bottom: TabBar(
-          controller: tab,
-          tabs: const [
-            Tab(
-              child: Text('일정',
-                  style: TextStyle(
-                       fontWeight: FontWeight.bold)),
+                  DbHelper().dataInitialization();
+                  getData();
+                },
+                color: Colors.grey,
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.account_circle),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyPageScreen(),
+                        ));
+                  },
+                  color: Colors.grey,
+                ),
+              ],
+              bottom: TabBar(
+                controller: tab,
+                tabs: const [
+                  Tab(
+                    child: Text('일정',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  Tab(
+                    child: Text('지도',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  )
+                ],
+                labelColor: CoColor.coPrimary,
+                unselectedLabelColor: CoColor.coGrey3,
+              ),
+              backgroundColor: Colors.white,
             ),
-            Tab(
-              child: Text('지도',
-                  style: TextStyle(
-                       fontWeight: FontWeight.bold)),
-            )
-          ],
-          labelColor: CoColor.coPrimary,
-          unselectedLabelColor: CoColor.coGrey3,
-        ),
-        backgroundColor: Colors.white,
-
-      ),
-      body:
-          TabPage(tab, todoList, mapList, finalCard)
-
-    );
+            body: TabPage(tab, todoList, mapList, finalCard));
   }
 }

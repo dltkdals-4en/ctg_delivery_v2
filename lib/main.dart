@@ -5,6 +5,7 @@ import 'package:ctg_delivery_v2/contstants/color.dart';
 import 'package:ctg_delivery_v2/database_helper.dart';
 import 'package:ctg_delivery_v2/get_data_page.dart';
 import 'package:ctg_delivery_v2/login/app_explain.dart';
+import 'package:ctg_delivery_v2/login/check_login.dart';
 import 'package:ctg_delivery_v2/my_page_screen.dart';
 
 import 'package:ctg_delivery_v2/splash_page.dart';
@@ -59,7 +60,7 @@ class MyApp extends StatelessWidget {
           builder: (context, snapshot) {
             return (snapshot.connectionState == ConnectionState.waiting)
                 ? SplashScreen()
-                :AppExplain();
+                :CheckLogin();
                 // : GetDataPage();
           },
         ));

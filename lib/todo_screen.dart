@@ -1,4 +1,5 @@
 import 'package:ctg_delivery_v2/todo_card.dart';
+import 'package:ctg_delivery_v2/todo_card_p.dart';
 import 'package:ctg_delivery_v2/visible_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -158,11 +159,7 @@ class _TodoScreenState extends State<TodoScreen> {
           child: ListView.builder(
             itemCount: widget.todoList.length,
             itemBuilder: (context, index) {
-              return TodoCard(
-                index,
-                widget.todoList,
-                widget.tab,
-              );
+              return TodoCardP(index);
             },
           ),
         ),

@@ -283,7 +283,7 @@ class TodoProvider with ChangeNotifier {
   }
 
   static String nameSpilt(data, compose) {
-    String originString = data['location_name'];
+    String originString = data.locationName;
     String parseData = '(';
     String parseString = '';
     if (originString.contains('(')) {

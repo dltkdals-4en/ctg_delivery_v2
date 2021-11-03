@@ -1,10 +1,13 @@
 import 'package:ctg_delivery_v2/database_helper.dart';
 import 'package:ctg_delivery_v2/db_provider.dart';
+import 'package:ctg_delivery_v2/main.dart';
+import 'package:ctg_delivery_v2/map_screen_p.dart';
 import 'package:ctg_delivery_v2/splash_page.dart';
 import 'package:ctg_delivery_v2/todo_screen_p.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'contstants/color.dart';
 import 'my_page_screen.dart';
@@ -26,6 +29,7 @@ class _GetDataPageState extends State<GetDataPage> {
       Provider.of<DbHelper>(context, listen: false).getCardList();
       Provider.of<DbHelper>(context, listen: false).getPathList();
       Provider.of<DbProvider>(context, listen: false).getTodoList();
+      Provider.of<DbProvider>(context, listen: false).getMapList();
     });
     super.initState();
   }
@@ -40,8 +44,7 @@ class _GetDataPageState extends State<GetDataPage> {
   Widget build(BuildContext context) {
     var data = Provider.of<DbHelper>(context);
     var data2 = Provider.of<DbProvider>(context);
-    print(data.todoList);
-    print(data.mapList);
+
     return DefaultTabController(
             length: 2,
             child: Scaffold(
@@ -73,6 +76,22 @@ class _GetDataPageState extends State<GetDataPage> {
                     },
                     color: Colors.grey,
                   ),
+                  IconButton(
+                    icon: const Icon(Icons.logout),
+                    onPressed: () async{
+                      final prefs = await SharedPreferences.getInstance();
+                      setState(() {
+                        prefs.clear();
+                      });
+                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MyApp(),
+                          ));
+                    },
+                    color: Colors.grey,
+                  ),
                 ],
                 bottom: TabBar(
                   tabs: [
@@ -93,9 +112,7 @@ class _GetDataPageState extends State<GetDataPage> {
               body: TabBarView(
                 children: [
                   TodoScreenP(),
-                  Container(
-                    color: Colors.greenAccent,
-                  )
+                  MapScreenP()
                 ],
               ),
 

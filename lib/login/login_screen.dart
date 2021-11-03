@@ -7,6 +7,7 @@ import 'package:ctg_delivery_v2/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen(this.phoneNumber, {Key? key}) : super(key: key);
@@ -25,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   var leftTime;
   var leftMin;
   var leftSec;
-  String verifyNumber = '7777';
+  String verifyNumber = '0000';
   int resend = 0;
   String smsText = '*SMS 재전송은 3회까지 가능합니다.';
   Color smsTextColor = CoColor.coGrey3;
@@ -213,13 +214,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 10,
                 ),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async{
+                    print(t.text);
                     if (t.text.isEmpty || t.text != verifyNumber) {
                       setState(() {
                         smsText = '*정확한 인증번호를 입력해주세요.';
                         smsTextColor = CoColor.coRed;
                       });
                     } else {
+                      final prefs = await SharedPreferences.getInstance();
+                      setState(() {
+
+                        prefs.setString('verifyNumber', verifyNumber);
+                      });
                       Navigator.pop(context);
                       Navigator.push(
                           context,

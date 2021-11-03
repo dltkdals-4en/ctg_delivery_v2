@@ -1,10 +1,12 @@
 import 'package:ctg_delivery_v2/db_provider.dart';
+import 'package:ctg_delivery_v2/model/map_card_model.dart';
 import 'package:ctg_delivery_v2/model/todo_card_model.dart';
 import 'package:ctg_delivery_v2/model/user_model.dart';
 import 'package:ctg_delivery_v2/todo_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sqflite/sqflite.dart';
 import 'dart:io' as io;
@@ -13,6 +15,7 @@ class DbHelper with ChangeNotifier {
   List cardList = [];
   List mapList = [];
   List<TodoCardModel> todoList = [];
+  List<MapCardModel> mapCardList = [];
   late TabController tab;
   List user =[];
   bool isLoading = false;
@@ -56,6 +59,19 @@ class DbHelper with ChangeNotifier {
     return todoList;
   }
 
+  Future<List<MapCardModel>> getMapCardList() async {
+    final db = await init();
+    mapList = await db.rawQuery(
+        'select * from waste_location l, pick_task p where l.location_id = p.location_id order by p.pick_order');
+
+    mapCardList = List.generate(mapList.length, ((i) {
+      return MapCardModel.fromJson(mapList[i]);
+    }));
+
+    notifyListeners();
+    return mapCardList;
+  }
+
   Future<List<Map<dynamic, dynamic>>> getMapList() async {
     final db = await init();
     return db.rawQuery(
@@ -87,7 +103,7 @@ class DbHelper with ChangeNotifier {
     mapList = await db.rawQuery(
         'select * from waste_location l, pick_task p where l.location_id = p.location_id order by p.pick_order');
 
-    DbProvider().mapList = mapList;
+
     notifyListeners();
   }
 
@@ -116,6 +132,19 @@ class DbHelper with ChangeNotifier {
   Future<dynamic> verificationNumber(number, phone) async{
     final db = await init();
     var i = await db.rawQuery("select count(*) from users where user_phone = '$phone' and authentication_number = '$number'");
+    print(i[0]['count(*)']);
+    print(await i[0]['count(*)']);
     return await i[0]['count(*)'];
+  }
+
+  Future<int> LoginPreferences() async{
+    final prefs = await SharedPreferences.getInstance();
+    String phone = (prefs.getString('phone') ?? '');
+    String number = (prefs.getString('verifyNumber') ?? '');
+    print(phone);
+    print(number);
+   return await verificationNumber(number, phone);
+
+
   }
 }

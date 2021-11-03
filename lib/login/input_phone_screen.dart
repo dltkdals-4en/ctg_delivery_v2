@@ -1,10 +1,12 @@
 import 'package:ctg_delivery_v2/contstants/color.dart';
 import 'package:ctg_delivery_v2/database_helper.dart';
 import 'package:ctg_delivery_v2/login/login_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_number/mobile_number.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 class InputPhoneScreen extends StatefulWidget {
@@ -19,6 +21,7 @@ class _InputPhoneScreenState extends State<InputPhoneScreen> {
   SmsAutoFill _autoFill = SmsAutoFill();
   String _mobileNumber = '';
   List<SimCard> _simCard = <SimCard>[];
+  String rNum = '';
 
   @override
   void initState() {
@@ -124,24 +127,27 @@ class _InputPhoneScreenState extends State<InputPhoneScreen> {
                 const Expanded(child: SizedBox()),
                 ElevatedButton(
                   onPressed: () async {
-                    print(t.value.text);
+                    setState(() {
+                      (t.text.isEmpty)
+                          ? rNum = _mobileNumber
+                          : rNum = t.value.text;
+                    });
+                    final prefs = await SharedPreferences.getInstance();
+                    setState(() {
+                      prefs.setString('phone', rNum);
+                    });
+                    int i = await data.findUser(rNum);
 
-                    var i = (t.value.text == null)
-                        ? await data.findUser(_mobileNumber)
-                        : await data.findUser(t.value.text);
-                    print(i);
                     (i == 0)
                         ? _showDialog(size)
                         :
 
                         // (data.findUser(_mobileNumber) == 0)
                         //     ?Navigator.pop(context):
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                            return (t.text.isEmpty)
-                                ? LoginScreen(_mobileNumber)
-                                : LoginScreen(t.text);
-                          }));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginScreen(rNum)));
                   },
                   style: ElevatedButton.styleFrom(
                     side: const BorderSide(width: 1, color: CoColor.coPrimary),
@@ -173,47 +179,138 @@ class _InputPhoneScreenState extends State<InputPhoneScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Center(
-              child: Text(
-            '커피 투고 고객 전용',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          )),
-          content: Container(
-            width: size.width * 1.4,
-            child: Column(
-              children: [
-                const Text.rich(
-                  TextSpan(text: '\u2022 본 페이지는 커피 투고 고객 전용입니다.\n', children: [
-                    TextSpan(
-                        text:
-                            '\u2022 커피 투고 고객인데 아이디/ 비밀번호를 모르시는 경우, 담당자에게 문의해주세요.\n'),
-                    TextSpan(text: '\u2022 커피 투고 고객이 아니시라면, 상담문의를 신청해주세요.'),
-                  ]),
-                  style: TextStyle(fontSize: 16, color: CoColor.coGrey1),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Column(
-                  children: [
-                    Text(
-                      '상담문의',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16),
+        return Dialog(
+          insetPadding: EdgeInsets.zero,
+          child: Container(
+            width: size.width * 0.9,
+            height: size.height * 0.55,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+              child: Column(
+                children: [
+                  Center(
+                      child: Text(
+                    '커피 투고 고객 전용',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                  )),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('\u2022 본 페이지는 커피 투고 고객 전용입니다.',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: CoColor.coGrey1,
+                          )),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text('\u2022 커피 투고 고객인데 아이디/비밀번호를 모르시는 경우, 담당자에게 문의해주세요.',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: CoColor.coGrey1,
+                          )),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text('\u2022 커피 투고 고객이 아니시라면, 상담문의를 신청해주세요.',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: CoColor.coGrey1,
+                          )),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          '상담문의',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: (size.width * 0.9 - 41) / 2,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: 32,
+                                    height: 32,
+                                    child: Center(
+                                      child: Image.asset(
+                                        'assets/images/loginValidatePhone.png',
+                                        width: 25,
+                                        height: 25,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    '070-000-0000',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              color: CoColor.coGrey2,
+                              width: 1,
+                              height: 22,
+                            ),
+                            Container(
+                              width: (size.width * 0.9 - 41) / 2,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: 32,
+                                    height: 32,
+                                    child: Center(
+                                      child: Image.asset(
+                                        'assets/images/loginValidateEmail.png',
+                                        width: 25,
+                                        height: 25,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 6,
+                                  ),
+                                  Text(
+                                    'admin@4en.co.kr',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      ],
                     ),
-                    Row(
-                      children: [],
-                    )
-                  ],
-                )
-              ],
+                  ),
+                  ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Container(
+                          color: CoColor.coPrimary,
+                          width: size.width * 0.9 - 40,
+                          height: 50,
+                          child: Center(child: Text('확인'))))
+                ],
+              ),
             ),
           ),
-          actions: [
-            ElevatedButton(
-                onPressed: () => Navigator.pop(context), child: Text('확인'))
-          ],
         );
       },
     );

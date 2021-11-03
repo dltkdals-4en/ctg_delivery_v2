@@ -12,6 +12,10 @@ class TodoCardModel {
   String? pickUpDate;
   double? gps_lat;
   double? gps_lng;
+  String? failReason;
+  int? failCode;
+  double? totalWaste;
+  String? pickDetails;
 
   TodoCardModel(
       {this.pickOrder,
@@ -24,19 +28,27 @@ class TodoCardModel {
       this.lastCallDate,
       this.pickUpDate,
       this.gps_lat,
-      this.gps_lng});
+      this.gps_lng,
+      this.failReason,
+      this.failCode,
+      this.pickDetails,
+      this.totalWaste});
 
   Map<String, dynamic> toMap() {
     return {
       'pick_id': this.pickOrder,
       'user_id': this.userName,
       'location_name': this.locationName,
-      'state': this.state,
-      'address': this.address,
-      'postal': this.postal,
-      'tel': this.tel,
-      'gps_lng': this.gps_lng,
-      'gps_lat': this.gps_lat
+      'pick_state': this.state,
+      'location_address': this.address,
+      'location_postal': this.postal,
+      'location_tel': this.tel,
+      'location_gps_lng': this.gps_lng,
+      'location_gps_lat': this.gps_lat,
+      'pick_fail_reason' : this.failReason,
+      'pick_fail_code' : this.failCode,
+      'pick_details' : this.pickDetails,
+      'pick_total_waste' : this.totalWaste,
     };
   }
 
@@ -52,7 +64,9 @@ class TodoCardModel {
     gps_lng = json['location_gps_long'];
     lastCallDate = json['last_call_date'];
     pickUpDate = json['pick_up_date'];
+    failReason = json['pick_fail_reason'];
+    failCode = json['pick_fail_code'];
+    totalWaste = json['pick_total_waste'];
+    pickDetails= json['pick_details'];
   }
-
-
 }

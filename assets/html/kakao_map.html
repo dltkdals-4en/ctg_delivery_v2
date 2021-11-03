@@ -19,8 +19,7 @@
 <script>
 
 		window.addEventListener('flutterInAppWebViewPlatformReady', function(event){
-		      window.flutter_inappwebview.callHandler('setposition')
-		      .then(function(result){
+		      window.flutter_inappwebview.callHandler('setPosition').then(function(result){
 		            console.log('result'+ result);
 		            console.log(typeof result);
 		            console.log('center: '+ center);
@@ -35,7 +34,7 @@
 		             	center: new kakao.maps.LatLng(positions[center].lat,positions[center].lng),
 		             	level: 6
 		             };
-		               console.log(positions[1].lat);
+		               console.log(positions[0].lat);
 		         var map = new kakao.maps.Map(container, options);
 
 		             console.log(map.toString());
@@ -159,7 +158,7 @@
 		                 }
 		                 var polyline = new kakao.maps.Polyline({
 		                            path: linePath, // 선을 구성하는 좌표배열 입니다
-		                            strokeWeight: 8, // 선의 두께 입니다
+		                            strokeWeight: 8 , // 선의 두께 입니다
 		                            endArrow: true,
 		                            strokeColor: '#ffffff', // 선의 색깔입니다
 		                            strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다

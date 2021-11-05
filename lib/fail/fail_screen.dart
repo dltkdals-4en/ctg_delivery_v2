@@ -1,10 +1,10 @@
 import 'package:ctg_delivery_v2/cafe_info.dart';
 import 'package:ctg_delivery_v2/contstants/color.dart';
 import 'package:ctg_delivery_v2/database_helper.dart';
-import 'package:ctg_delivery_v2/fail_reason_tile.dart';
+import 'package:ctg_delivery_v2/fail/fail_reason_tile.dart';
 import 'package:flutter/material.dart';
 
-import 'main.dart';
+import '../main.dart';
 
 class FailScreen extends StatefulWidget {
   const FailScreen(this.data, {Key? key}) : super(key: key);

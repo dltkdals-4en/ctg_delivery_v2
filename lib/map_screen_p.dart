@@ -12,9 +12,9 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'collect_screen.dart';
+import 'collect/collect_screen.dart';
 import 'contstants/color.dart';
-import 'fail_screen.dart';
+import 'fail/fail_screen.dart';
 
 class MapScreenP extends StatefulWidget {
   const MapScreenP(
@@ -80,7 +80,7 @@ class _MapScreenPState extends State<MapScreenP> {
           alignment: Alignment.topCenter,
           children: <Widget>[
             SlidingUpPanel(
-              defaultPanelState: PanelState.CLOSED,
+              defaultPanelState: provider.mapCardPanelState,
               maxHeight: _panelHeightOpen,
               minHeight: 30,
               parallaxEnabled: false,
@@ -343,13 +343,14 @@ class _MapScreenPState extends State<MapScreenP> {
               inAppWebViewController.addJavaScriptHandler(
                   handlerName: 'setPosition',
                   callback: (args) {
-                    print('1111 ${provider.position}');
+
                     return provider.position;
                   });
               inAppWebViewController.addJavaScriptHandler(
                   handlerName: 'getPost',
                   callback: (args) {
                     print('args : ${args}');
+                    provider.changeMapCard(args[0]);
                     // var i = widget.mapList.indexWhere(
                     //         (element) => element['location_name'] == args[0]);
                     // setMapCardIndex(i);

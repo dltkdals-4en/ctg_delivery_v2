@@ -1,7 +1,9 @@
 import 'package:ctg_delivery_v2/database_helper.dart';
 import 'package:ctg_delivery_v2/model/map_card_model.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'contstants/color.dart';
 import 'model/todo_card_model.dart';
@@ -17,6 +19,9 @@ class DbProvider with ChangeNotifier {
   Color uiContents2Color = CoColor.coBlack;
   int mapCardIndex = 0;
   List position = [];
+  TabController? tab;
+
+  var mapCardPanelState = PanelState.CLOSED;
 
   Future<void> getTodoList() async {
     todoList = await DbHelper().getCardList();
@@ -25,6 +30,11 @@ class DbProvider with ChangeNotifier {
 
   Future<void> getMapList() async {
     mapList = await DbHelper().getMapCardList();
+    notifyListeners();
+  }
+
+  dataInitialization() async {
+    await DbHelper().dataInitialization();
     notifyListeners();
   }
 
@@ -112,17 +122,27 @@ class DbProvider with ChangeNotifier {
   Future<void> getPosition() async {
     if (position.isEmpty) {
       for (int i = 0; i < mapList.length; i++) {
-
-          position.add({
-            'title': mapList[i].locationName,
-            'lat': mapList[i].gps_lat,
-            'lng': mapList[i].gps_lng,
-            'state': mapList[i].state,
-            'id': mapList[i].pickOrder,
-          });
-
+        position.add({
+          'title': mapList[i].locationName,
+          'lat': mapList[i].gps_lat,
+          'lng': mapList[i].gps_lng,
+          'state': mapList[i].state,
+          'id': mapList[i].pickOrder,
+        });
       }
       print('rrrr $position');
     }
   }
+
+  changeMapCard(locationName) {
+    for(int i = 0 ; i<mapList.length; i++){
+      print(mapList[i].locationName);
+    }
+
+    mapCardIndex =
+        mapList.indexWhere((element) => element.locationName==locationName);
+    mapCardPanelState = PanelState.OPEN;
+    notifyListeners();
+  }
+
 }

@@ -1,7 +1,7 @@
  import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'model/collect_data_model.dart';
+import '../model/collect_data_model.dart';
 
 class CollectProvider with ChangeNotifier {
   TextEditingController t = TextEditingController();

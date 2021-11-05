@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../collect_screen.dart';
-import '../fail_screen.dart';
+import '../collect/collect_screen.dart';
+import '../fail/fail_screen.dart';
 import '../todo_provider.dart';
 
 class MapCard extends StatefulWidget {

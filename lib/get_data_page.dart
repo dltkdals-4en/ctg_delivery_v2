@@ -19,8 +19,9 @@ class GetDataPage extends StatefulWidget {
   State<GetDataPage> createState() => _GetDataPageState();
 }
 
-class _GetDataPageState extends State<GetDataPage> {
+class _GetDataPageState extends State<GetDataPage> with SingleTickerProviderStateMixin{
   bool isLoading = false;
+
 
   @override
   void initState() {
@@ -30,12 +31,14 @@ class _GetDataPageState extends State<GetDataPage> {
       Provider.of<DbHelper>(context, listen: false).getPathList();
       Provider.of<DbProvider>(context, listen: false).getTodoList();
       Provider.of<DbProvider>(context, listen: false).getMapList();
+      Provider.of<DbProvider>(context, listen: false).tab =TabController(length: 2, vsync: this);
     });
     super.initState();
   }
 
   @override
   void dispose() {
+
     // TODO: implement dispose
     super.dispose();
   }
@@ -60,7 +63,7 @@ class _GetDataPageState extends State<GetDataPage> {
                 leading: IconButton(
                   icon: const Icon(Icons.refresh),
                   onPressed: () {
-                    data.dataInitialization();
+                    data2.dataInitialization();
                   },
                   color: Colors.grey,
                 ),
@@ -94,6 +97,7 @@ class _GetDataPageState extends State<GetDataPage> {
                   ),
                 ],
                 bottom: TabBar(
+                  controller: data2.tab,
                   tabs: [
                     Tab(
                       child: Text('일정',
@@ -110,6 +114,7 @@ class _GetDataPageState extends State<GetDataPage> {
                 backgroundColor: Colors.white,
               ),
               body: TabBarView(
+                controller: data2.tab,
                 children: [
                   TodoScreenP(),
                   MapScreenP()

@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_picker/Picker.dart';
 import 'package:provider/provider.dart';
 
-import 'cafe_info.dart';
+import '../cafe_info.dart';
 import 'collect_provider.dart';
 
 class CollectScreen extends StatefulWidget {

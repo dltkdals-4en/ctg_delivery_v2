@@ -10,9 +10,9 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'collect_screen.dart';
+import 'collect/collect_screen.dart';
 import 'contstants/color.dart';
-import 'fail_screen.dart';
+import 'fail/fail_screen.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen(

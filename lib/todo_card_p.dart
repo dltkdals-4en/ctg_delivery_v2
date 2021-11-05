@@ -23,7 +23,7 @@ class TodoCardP extends StatefulWidget {
 class _TodoCardPState extends State<TodoCardP> {
   @override
   void initState() {
-    Provider.of<DbProvider>(context, listen: false).setUI(widget.index);
+
     super.initState();
   }
 
@@ -32,11 +32,15 @@ class _TodoCardPState extends State<TodoCardP> {
     var provider = Provider.of<DbProvider>(context);
     var data = provider.todoList[widget.index];
     var textFactor = MediaQuery.of(context).textScaleFactor;
+    provider.setUI(widget.index);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          provider.tab!.animateTo(1);
+          provider.changeMapCard(data.locationName!);
+        },
         child: Card(
           margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
           elevation: 5,

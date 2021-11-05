@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'contstants/color.dart';
+import '../contstants/color.dart';
 
 class FailReasonTile<T> extends StatelessWidget {
   const FailReasonTile(

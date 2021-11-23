@@ -1,20 +1,22 @@
 import 'package:ctg_delivery_v2/contstants/color.dart';
+import 'package:ctg_delivery_v2/db_provider.dart';
+import 'package:ctg_delivery_v2/model/map_card_model.dart';
 import 'package:ctg_delivery_v2/todo_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class CafeInfo extends StatelessWidget {
-  const CafeInfo(this.data, {Key? key}) : super(key: key);
+class CafeInfoP extends StatelessWidget {
+  const CafeInfoP(this.cardData, {Key? key}) : super(key: key);
 
-  final Map<String, dynamic> data;
-
+  final MapCardModel cardData;
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<DbProvider>(context);
     final Size size = MediaQuery.of(context).size;
     return Container(
       color: Colors.white,
-
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(20),
         child: Row(
           children: <Widget>[
             SizedBox(
@@ -26,13 +28,12 @@ class CafeInfo extends StatelessWidget {
                   radius: 34.5,
                   backgroundColor: CoColor.coGrey5,
                   child: CircleAvatar(
-                    // backgroundImage: TodoProvider.checkImage(data),
-                    // (data['location_postal'] != null)
-                    //     ? NetworkImage(
-                    //         "${data['location_postal']}")
-                    //     : const NetworkImage(
-                    //         'https://picsum.photos/200/300'),
-                    radius: 34,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(49),
+                      child: provider.setImage(cardData),
+                    ),
+                    backgroundColor: Colors.white,
+                    radius: 49,
                   ),
                 ),
                 backgroundColor: CoColor.coGrey5,
@@ -46,12 +47,12 @@ class CafeInfo extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text(
-                  CardUiProvider.nameSpilt(data, 'forward'),
+                  CardUiProvider.nameSpilt(cardData, 'forward'),
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 Text(
-                  CardUiProvider.nameSpilt(data, 'behind'),
+                  CardUiProvider.nameSpilt(cardData, 'behind'),
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,

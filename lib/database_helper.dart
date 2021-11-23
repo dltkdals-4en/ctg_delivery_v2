@@ -17,7 +17,7 @@ class DbHelper with ChangeNotifier {
   List<TodoCardModel> todoList = [];
   List<MapCardModel> mapCardList = [];
   late TabController tab;
-  List user =[];
+  List user = [];
   bool isLoading = false;
 
   Future<void> openDB() async {}
@@ -54,7 +54,10 @@ class DbHelper with ChangeNotifier {
     todoList = List.generate(cardList.length, ((i) {
       return TodoCardModel.fromJson(cardList[i]);
     }));
-
+    print('todo');
+    for (int i = 0; i < todoList.length; i++) {
+      print(todoList[i].state);
+    }
     notifyListeners();
     return todoList;
   }
@@ -67,7 +70,10 @@ class DbHelper with ChangeNotifier {
     mapCardList = List.generate(mapList.length, ((i) {
       return MapCardModel.fromJson(mapList[i]);
     }));
-
+    print('map');
+    for (int i = 0; i < mapCardList.length; i++) {
+      print(mapCardList[i].state);
+    }
     notifyListeners();
     return mapCardList;
   }
@@ -89,6 +95,8 @@ class DbHelper with ChangeNotifier {
 
     final result = await db.rawUpdate(
         "update pick_task set pick_state = 11, pick_details ='$volumes', pick_total_waste = $totalVolume, pick_up_date = '${DateTime.now()}'  where pick_id = $id");
+
+    notifyListeners();
     return result;
   }
 
@@ -96,6 +104,7 @@ class DbHelper with ChangeNotifier {
     final db = await init();
     await db.rawUpdate(
         "update pick_task set pick_state = 10, pick_fail_code = $failCode, pick_fail_reason = '$failReason', pick_up_date = '${DateTime.now()}'  where pick_id = $id");
+    notifyListeners();
   }
 
   Future<void> getPathList() async {
@@ -103,48 +112,55 @@ class DbHelper with ChangeNotifier {
     mapList = await db.rawQuery(
         'select * from waste_location l, pick_task p where l.location_id = p.location_id order by p.pick_order');
 
-
     notifyListeners();
   }
 
   Future<void> dataInitialization() async {
     final db = await init();
-    db.rawUpdate(
+    await db
+        .rawQuery("update pick_task set pick_state = 20 where location_id = 6");
+    await db.rawUpdate(
         "update pick_task set pick_state = 0 , pick_details = '', pick_total_waste = 0, pick_fail_reason= '', pick_fail_code = 0 where pick_state not in (20,21)");
-    db.rawUpdate(
+    await db.rawUpdate(
         "update waste_location set last_call_date = '${DateTime.now()}'  where location_id in (select location_id from pick_task where pick_state not in(20,21))");
+    todoList.clear();
+    mapCardList.clear();
+    await getCardList();
+    await getMapCardList();
+    for (int i = 0; i < mapCardList.length; i++) {
+      print('${mapCardList[i].locationName} // ${mapCardList[i].state}');
+    }
+    notifyListeners();
   }
 
   Future<UserModel> getUserInfo(phone) async {
     final db = await init();
 
-
-    user = await db.rawQuery(
-        "select * from users where user_phone = '$phone'");
+    user = await db.rawQuery("select * from users where user_phone = '$phone'");
     return UserModel.fromJson(user[0]);
   }
-  Future<dynamic> findUser(phone) async{
+
+  Future<dynamic> findUser(phone) async {
     final db = await init();
-    var i = await db.rawQuery("select count(*) from users where user_phone = '$phone'");
+    var i = await db
+        .rawQuery("select count(*) from users where user_phone = '$phone'");
 
     return await i[0]['count(*)'];
   }
-  Future<dynamic> verificationNumber(number, phone) async{
+
+  Future<dynamic> verificationNumber(number, phone) async {
     final db = await init();
-    var i = await db.rawQuery("select count(*) from users where user_phone = '$phone' and authentication_number = '$number'");
+    var i = await db.rawQuery(
+        "select count(*) from users where user_phone = '$phone' and authentication_number = '$number'");
     print(i[0]['count(*)']);
     print(await i[0]['count(*)']);
     return await i[0]['count(*)'];
   }
 
-  Future<int> LoginPreferences() async{
+  Future<int> LoginPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     String phone = (prefs.getString('phone') ?? '');
     String number = (prefs.getString('verifyNumber') ?? '');
-    print(phone);
-    print(number);
-   return await verificationNumber(number, phone);
-
-
+    return await verificationNumber(number, phone);
   }
 }

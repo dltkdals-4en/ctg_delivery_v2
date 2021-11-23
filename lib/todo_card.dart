@@ -83,7 +83,7 @@ class _TodoCardState extends State<TodoCard> {
 
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<TodoProvider>(context);
+    var provider = Provider.of<CardUiProvider>(context);
     var data = widget.cafeData[widget.index];
     var textFactor = MediaQuery.of(context).textScaleFactor;
 
@@ -112,7 +112,7 @@ class _TodoCardState extends State<TodoCard> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          TodoProvider.nameSpilt(data, 'forward'),
+                          CardUiProvider.nameSpilt(data, 'forward'),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: CoColor.coBlack,
@@ -123,7 +123,7 @@ class _TodoCardState extends State<TodoCard> {
                           width: 10,
                         ),
                         Text(
-                          TodoProvider.nameSpilt(data, 'behind'),
+                          CardUiProvider.nameSpilt(data, 'behind'),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: CoColor.coGrey3,
@@ -131,7 +131,7 @@ class _TodoCardState extends State<TodoCard> {
                           ),
                         ),
                         const Expanded(child: SizedBox()),
-                        TodoProvider.stateText(data['pick_state'], 'todo'),
+                        CardUiProvider.stateText(data['pick_state'], 'todo'),
                       ],
                     ),
                     const Divider(

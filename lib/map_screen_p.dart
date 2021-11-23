@@ -13,16 +13,15 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'collect/collect_screen.dart';
+import 'collect/collect_screen_p.dart';
 import 'contstants/color.dart';
 import 'fail/fail_screen.dart';
+import 'fail/fail_screen_p.dart';
 
 class MapScreenP extends StatefulWidget {
-  const MapScreenP(
-    {
+  const MapScreenP({
     Key? key,
   }) : super(key: key);
-
-
 
   @override
   _MapScreenPState createState() => _MapScreenPState();
@@ -54,8 +53,6 @@ class _MapScreenPState extends State<MapScreenP> {
   @override
   void initState() {
     super.initState();
-    Provider.of<DbProvider>(context, listen: false).getPosition();
-
 
     _fabHeight = _initFabHeight;
   }
@@ -66,13 +63,13 @@ class _MapScreenPState extends State<MapScreenP> {
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<DbProvider>(context);
-    // _panelHeightOpen = MediaQuery.of(context).size.height * 0.30;
-    MapCardModel data =provider.mapList[provider.mapCardIndex];
+    var mapList = Provider.of<List<MapCardModel>>(context);
+    // for (int i = 0; i < mapList.length; i++) {
+    //   print('${mapList[i].locationName} // ${mapList[i].state}');
+    // }
 
     return SafeArea(
       child: Material(
@@ -86,7 +83,7 @@ class _MapScreenPState extends State<MapScreenP> {
               parallaxEnabled: false,
               parallaxOffset: .5,
               body: _body(webViewController, provider),
-              panelBuilder: (sc) => _panel(sc, data),
+              panelBuilder: (sc) => _panel(sc, provider.mapCardIndex),
               // MapCard(sc, widget.mapList, mapCardIndex),
               borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(18.0),
@@ -101,22 +98,27 @@ class _MapScreenPState extends State<MapScreenP> {
     );
   }
 
-  Widget _panel(ScrollController sc,MapCardModel data) {
+  Widget _panel(ScrollController sc, int index) {
+    var provider = Provider.of<DbProvider>(context);
+    var mapList = Provider.of<List<MapCardModel>>(context);
+    MapCardModel data = mapList[provider.mapCardIndex];
+
     return Wrap(
       children: [
         Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
           child: Column(
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    width: 100,
+                    width: 50,
                     height: 5,
                     decoration: BoxDecoration(
                         color: Colors.grey[300],
-                        borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(12.0))),
                   ),
                 ],
               ),
@@ -128,7 +130,7 @@ class _MapScreenPState extends State<MapScreenP> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    TodoProvider.nameSpilt(data, 'forward'),
+                    CardUiProvider.nameSpilt(data, 'forward'),
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -138,7 +140,7 @@ class _MapScreenPState extends State<MapScreenP> {
                     width: 10,
                   ),
                   Text(
-                    TodoProvider.nameSpilt(data, 'behind'),
+                    CardUiProvider.nameSpilt(data, 'behind'),
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: CoColor.coGrey3,
@@ -146,7 +148,7 @@ class _MapScreenPState extends State<MapScreenP> {
                     ),
                   ),
                   const Expanded(child: SizedBox()),
-                  TodoProvider.stateText(data.state, 'map'),
+                  CardUiProvider.stateText(data.state, 'map'),
                 ],
               ),
               const SizedBox(
@@ -158,12 +160,12 @@ class _MapScreenPState extends State<MapScreenP> {
                     width: 100,
                     height: 100,
                     child: CircleAvatar(
-                      radius: 50,
+                      radius: 49.5,
                       backgroundColor: Color(0xFFDDDDDD),
                       child: CircleAvatar(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(49),
-                          child: setImage(data),
+                          child: provider.setImage(data),
                         ),
                         backgroundColor: Colors.white,
                         radius: 49,
@@ -175,18 +177,18 @@ class _MapScreenPState extends State<MapScreenP> {
                     child: SizedBox(
                       height: 100,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Icon(Icons.location_on),
-                              SizedBox(
+                              const SizedBox(
                                 width: 6,
                               ),
                               SizedBox(
-                                width: 180,
+                                width: MediaQuery.of(context).size.width - 200,
                                 child: Text(
                                   data.address!,
                                   softWrap: true,
@@ -197,11 +199,11 @@ class _MapScreenPState extends State<MapScreenP> {
                           Row(
                             children: [
                               const Icon(Icons.phone),
-                              SizedBox(
+                              const SizedBox(
                                 width: 6,
                               ),
                               SizedBox(
-                                width: 180,
+                                width: MediaQuery.of(context).size.width - 200,
                                 child: Text(data.tel!),
                               )
                             ],
@@ -212,66 +214,111 @@ class _MapScreenPState extends State<MapScreenP> {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 3,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) => FailScreen(data),
-                          //     ));
-                        },
+              (data.state == 21 || data.state == 20)
+                  ? Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: ElevatedButton(
+                        onPressed: () {},
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
+                            Image.asset(
+                              'assets/images/navi.png',
+                              fit: BoxFit.cover,
+                              width: 16,
+                              height: 16,
+                              alignment: Alignment.center,
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
                             Text(
-                              '수거 실패',
-                              style: TextStyle(color: Colors.black),
+                              '길 안내',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
                             ),
                           ],
                         ),
                         style: ElevatedButton.styleFrom(
                           side: const BorderSide(
-                              width: 1, color: Color(0xFFDDDDDD)),
-                          primary: Color(0xFFDDDDDD),
+                              width: 1, color: CoColor.coPrimary),
+                          primary: CoColor.coPrimary,
                           elevation: 0,
-                        )),
-                  ),
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  Expanded(
-                    child: SizedBox(
-                      child: ElevatedButton(
-                          onPressed: () {
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder: (context) => CollectScreen(data),
-                            //     ));
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Text(
-                                '수거량 입력',
-                                style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    )
+                  : Row(
+                      children: [
+                        SizedBox(
+                          width: (MediaQuery.of(context).size.width) / 3,
+                          child: ElevatedButton(
+                              onPressed: () {
+
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => FailScreenP(provider.mapCardIndex),
+                                    ));
+                                provider.tab!.animateTo(0);
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Text(
+                                    '수거 실패',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
                               ),
-                            ],
+                              style: ElevatedButton.styleFrom(
+                                side: const BorderSide(
+                                    width: 1, color: CoColor.coGrey6),
+                                primary: CoColor.coGrey6,
+                                elevation: 0,
+                              )),
+                        ),
+                        const SizedBox(
+                          width: 12,
+                        ),
+                        Expanded(
+                          child: SizedBox(
+                            child: ElevatedButton(
+                                onPressed: () {
+
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CollectScreenP(
+                                            provider.mapCardIndex),
+                                      ));
+                                  provider.tab!.animateTo(0);
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Text(
+                                      '수거량 입력',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  side: const BorderSide(
+                                      width: 1, color: CoColor.coPrimary),
+                                  primary: CoColor.coPrimary,
+                                  elevation: 0,
+                                )),
                           ),
-                          style: ElevatedButton.styleFrom(
-                            side: const BorderSide(
-                                width: 1, color: CoColor.coPrimary),
-                            primary: CoColor.coPrimary,
-                            elevation: 0,
-                          )),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ],
           ),
         ),
@@ -279,43 +326,7 @@ class _MapScreenPState extends State<MapScreenP> {
     );
   }
 
-  Image setImage(MapCardModel data) {
-
-
-    if (data.locationName == '포이엔') {
-      return Image.asset(
-        'assets/images/4enLogo2.png',
-        fit: BoxFit.cover,
-      );
-    } else if (data.locationName == '집하') {
-      return Image.asset(
-        'assets/images/4en.jpg',
-        fit: BoxFit.cover,
-      );
-      postalImage = AssetImage('assets/images/4en.jpg');
-    } else if (data.locationName == '대림창고(성수)') {
-      return Image.asset(
-        'assets/images/daerim.jpg',
-        fit: BoxFit.cover,
-        width: 98,
-        height: 98,
-      );
-      postalImage = AssetImage('assets/images/daerim.jpg');
-    } else if (data.postal != null) {
-      return Image.network(
-        '${data.postal}',
-        fit: BoxFit.cover,
-      );
-    } else {
-      return Image.network(
-        '${data.postal}',
-        fit: BoxFit.cover,
-      );
-    }
-  }
-
   Widget _body(inAppWebViewController, DbProvider provider) {
-
     return Column(
       children: [
         Expanded(
@@ -331,10 +342,11 @@ class _MapScreenPState extends State<MapScreenP> {
             initialFile: 'assets/html/kakao_map.html',
             initialUserScripts: UnmodifiableListView<UserScript>([
               UserScript(
-                  source: 'var center = $mapCardIndex',
+                  source: 'var center = ${provider.mapCardIndex}',
                   injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START),
               UserScript(
-                  source: 'var now =$mapCardIndex',
+                  source:
+                      'var now =${provider.mapList.indexWhere((element) => element.state == 0)}',
                   injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START)
             ]),
             onWebViewCreated: (InAppWebViewController controller) {
@@ -343,7 +355,6 @@ class _MapScreenPState extends State<MapScreenP> {
               inAppWebViewController.addJavaScriptHandler(
                   handlerName: 'setPosition',
                   callback: (args) {
-
                     return provider.position;
                   });
               inAppWebViewController.addJavaScriptHandler(

@@ -9,7 +9,7 @@ class CoColor {
   static const Color coGrey4 = Color(0xFFD8D8D8);
   static const Color coGrey5 = Color(0xFFE6E6E6);
   static const Color coGrey6 = Color(0xFFF6F6F6);
-  static const Color coPrimaryText = Color(0xFFE8F0FF);
+  static const Color coPrimary2 = Color(0xFFE8F0FF);
   static const Color coGreyText = Color(0xFFCBCFD6);
   static const Color coGreen = Color(0xFF50CF63);
   static const Color coGreenDark = Color(0xFF2DAB40);

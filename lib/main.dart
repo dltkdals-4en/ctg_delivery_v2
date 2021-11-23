@@ -28,8 +28,8 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<TodoProvider>(
-          create: (_) => TodoProvider(),
+        ChangeNotifierProvider<CardUiProvider>(
+          create: (_) => CardUiProvider(),
         ),
         ChangeNotifierProvider<DbHelper>(
           create: (_) => DbHelper(),
@@ -47,23 +47,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        // Remove the debug banner
-        debugShowCheckedModeBanner: false,
-        title: 'CoffeeToGO',
-        theme: ThemeData(
-            fontFamily: 'NotoSansKR',
-            iconTheme: const IconThemeData(color: CoColor.coBlack)),
-        home: FutureBuilder(
-          future: Future.delayed(
-            Duration(seconds: 3),
-          ),
-          builder: (context, snapshot) {
-            return (snapshot.connectionState == ConnectionState.waiting)
-                ? SplashScreen()
-                :CheckLogin();
-                // : GetDataPage();
-          },
-        ));
+      // Remove the debug banner
+      debugShowCheckedModeBanner: false,
+      title: 'CoffeeToGO',
+      theme: ThemeData(
+          fontFamily: 'NotoSansKR',
+          iconTheme: const IconThemeData(color: CoColor.coBlack)),
+      // home: FutureBuilder(
+      //   future: Future.delayed(
+      //     Duration(seconds: 3),
+      //   ),
+      //   builder: (context, snapshot) {
+      //     return (snapshot.connectionState == ConnectionState.waiting)
+      //         ? SplashScreen()
+      home: CheckLogin(),
+      // : GetDataPage();
+      // },
+      // ));
+    );
   }
 }
 

@@ -135,6 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 TextFormField(
                   controller: t,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderSide:
@@ -170,13 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 setResendTimer();
                               } else {
                                 customToast(size);
-                                // Fluttertoast.showToast(
-                                //   msg: '${30 - resend}초 후 다시 시도하세요.',
-                                //   gravity: ToastGravity.CENTER,
-                                //   backgroundColor: CoColor.coGrey1,
-                                //   toastLength: Toast.LENGTH_LONG,
-                                //   textColor: Colors.white,
-                                // );
+
                               }
                             },
                             style: ElevatedButton.styleFrom(

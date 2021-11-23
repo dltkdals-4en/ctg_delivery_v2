@@ -107,7 +107,7 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<TodoProvider>(context);
+    var provider = Provider.of<CardUiProvider>(context);
     // _panelHeightOpen = MediaQuery.of(context).size.height * 0.30;
     var data = widget.mapList[mapCardIndex];
 
@@ -165,7 +165,7 @@ class _MapScreenState extends State<MapScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    TodoProvider.nameSpilt(data, 'forward'),
+                    CardUiProvider.nameSpilt(data, 'forward'),
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -175,7 +175,7 @@ class _MapScreenState extends State<MapScreen> {
                     width: 10,
                   ),
                   Text(
-                    TodoProvider.nameSpilt(data, 'behind'),
+                    CardUiProvider.nameSpilt(data, 'behind'),
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: CoColor.coGrey3,
@@ -183,7 +183,7 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                   ),
                   const Expanded(child: SizedBox()),
-                  TodoProvider.stateText(data['pick_state'], 'map'),
+                  CardUiProvider.stateText(data['pick_state'], 'map'),
                 ],
               ),
               const SizedBox(

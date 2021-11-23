@@ -11,8 +11,8 @@ import 'model/todo_card_model.dart';
 class DbProvider with ChangeNotifier {
   List<TodoCardModel> todoList = [];
   List<MapCardModel> mapList = [];
-  String uiTitle1 = '요청시간';
-  String uiTitle2 = '경과시간';
+  String uiTitle1 = '요청 시간';
+  String uiTitle2 = '경과 시간';
   String dateString = '';
   String uiContents1 = '';
   String uiContents2 = '';
@@ -20,21 +20,32 @@ class DbProvider with ChangeNotifier {
   int mapCardIndex = 0;
   List position = [];
   TabController? tab;
-
   var mapCardPanelState = PanelState.CLOSED;
+  bool visible = false;
+  int scheduleCount = 0;
+  int sucCount = 0;
+  int failCount = 0;
+  int totalCount = 0;
 
-  Future<void> getTodoList() async {
+  Future<List<TodoCardModel>> getTodoList() async {
     todoList = await DbHelper().getCardList();
-    notifyListeners();
+    totalCount = todoList.length;
+    return todoList;
   }
-
-  Future<void> getMapList() async {
+ 
+  Future<List<MapCardModel>> getMapList() async {
     mapList = await DbHelper().getMapCardList();
-    notifyListeners();
+    getPosition();
+    return mapList;
   }
 
   dataInitialization() async {
     await DbHelper().dataInitialization();
+
+    getTodoList();
+    getMapList();
+    getPosition();
+    updateCounts();
     notifyListeners();
   }
 
@@ -43,6 +54,8 @@ class DbProvider with ChangeNotifier {
 
     switch (data.state) {
       case 0:
+        uiTitle1 = '요청 시간';
+        uiTitle2 = '경과 시간';
         uiContents1 = dateFormat(data.lastCallDate);
         defernece(data.lastCallDate);
 
@@ -62,7 +75,7 @@ class DbProvider with ChangeNotifier {
         uiTitle2 = '수거 총량';
         uiContents1 = dateFormat(data.pickUpDate);
         uiContents2 = "${data.totalWaste!.toStringAsFixed(1)} kg";
-
+        uiContents2Color = Colors.black;
         break;
 
       case 20:
@@ -113,6 +126,37 @@ class DbProvider with ChangeNotifier {
     }
   }
 
+  Image setImage(MapCardModel data) {
+    if (data.locationName == '포이엔') {
+      return Image.asset(
+        'assets/images/4enLogo2.png',
+        fit: BoxFit.cover,
+      );
+    } else if (data.locationName == '집하') {
+      return Image.asset(
+        'assets/images/4en.jpg',
+        fit: BoxFit.cover,
+      );
+    } else if (data.locationName == '대림창고(성수)') {
+      return Image.asset(
+        'assets/images/daerim.jpg',
+        fit: BoxFit.cover,
+        width: 98,
+        height: 98,
+      );
+    } else if (data.postal != null) {
+      return Image.network(
+        '${data.postal}',
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Image.network(
+        '${data.postal}',
+        fit: BoxFit.cover,
+      );
+    }
+  }
+
   String dateFormat(date) {
     var stringToDate = DateFormat('yy-MM-dd HH:mm').parse(date);
     var format = DateFormat('yy/MM/dd HH:mm');
@@ -120,6 +164,7 @@ class DbProvider with ChangeNotifier {
   }
 
   Future<void> getPosition() async {
+    position.clear();
     if (position.isEmpty) {
       for (int i = 0; i < mapList.length; i++) {
         position.add({
@@ -130,19 +175,30 @@ class DbProvider with ChangeNotifier {
           'id': mapList[i].pickOrder,
         });
       }
-      print('rrrr $position');
     }
   }
 
+  updateCounts() {
+    scheduleCount = todoList.where((element) => element.state != 0).length;
+    sucCount = todoList.where((element) => element.state == 11).length;
+    failCount = todoList.where((element) => element.state == 10).length;
+    visibleCheck();
+
+  }
+
   changeMapCard(locationName) {
-    for(int i = 0 ; i<mapList.length; i++){
+    for (int i = 0; i < mapList.length; i++) {
       print(mapList[i].locationName);
     }
 
     mapCardIndex =
-        mapList.indexWhere((element) => element.locationName==locationName);
+        mapList.indexWhere((element) => element.locationName == locationName);
     mapCardPanelState = PanelState.OPEN;
     notifyListeners();
   }
 
+  void visibleCheck() {
+    (scheduleCount == totalCount) ? visible = true : visible = false;
+
+  }
 }

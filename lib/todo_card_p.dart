@@ -59,7 +59,7 @@ class _TodoCardPState extends State<TodoCardP> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          TodoProvider.nameSpilt(data, 'forward'),
+                          CardUiProvider.nameSpilt(data, 'forward'),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: CoColor.coBlack,
@@ -70,7 +70,7 @@ class _TodoCardPState extends State<TodoCardP> {
                           width: 10,
                         ),
                         Text(
-                          TodoProvider.nameSpilt(data, 'behind'),
+                          CardUiProvider.nameSpilt(data, 'behind'),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: CoColor.coGrey3,
@@ -78,7 +78,7 @@ class _TodoCardPState extends State<TodoCardP> {
                           ),
                         ),
                         const Expanded(child: SizedBox()),
-                        TodoProvider.stateText(data.state, 'todo'),
+                        CardUiProvider.stateText(data.state, 'todo'),
                       ],
                     ),
                     const Divider(

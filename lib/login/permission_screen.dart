@@ -87,7 +87,7 @@ class PermissionScreen extends StatelessWidget {
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(24),
-                                color: CoColor.coPrimaryText,
+                                color: CoColor.coPrimary2,
                               ),
                               child: SizedBox(
                                 width: 48,

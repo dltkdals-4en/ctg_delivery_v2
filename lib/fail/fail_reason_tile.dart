@@ -15,7 +15,7 @@ class FailReasonTile<T> extends StatelessWidget {
   final int index;
   final T value;
   final T groupValue;
-  final IconData icon;
+  final String icon;
   final String title;
   final ValueChanged<T?> onChanged;
 
@@ -24,7 +24,7 @@ class FailReasonTile<T> extends StatelessWidget {
     final isSelected = value == groupValue;
     bool visible = false;
     return Padding(
-      padding: const EdgeInsets.only(top: 24, right: 12,left: 12),
+      padding: const EdgeInsets.only(top: 10, right: 20,left: 20, bottom: 5),
       child: InkWell(
         onTap: () {
           return onChanged(value);
@@ -34,7 +34,7 @@ class FailReasonTile<T> extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              Image.asset(
                 icon,
                 color: isSelected ? CoColor.coPrimary : CoColor.coGrey1,
               ),

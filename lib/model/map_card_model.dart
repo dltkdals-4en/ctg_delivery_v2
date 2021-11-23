@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapCardModel {
+  int? pickId;
   int? pickOrder;
   String? userName;
   String? locationName;
@@ -14,7 +15,8 @@ class MapCardModel {
   double? gps_lng;
 
   MapCardModel(
-      {this.pickOrder,
+      {this.pickId,
+        this.pickOrder,
         this.userName,
         this.locationName,
         this.state,
@@ -28,7 +30,8 @@ class MapCardModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'pick_id': this.pickOrder,
+      'pick_id' : this.pickId,
+      'pick_order': this.pickOrder,
       'user_id': this.userName,
       'location_name': this.locationName,
       'state': this.state,
@@ -41,6 +44,7 @@ class MapCardModel {
   }
 
   MapCardModel.fromJson(Map<String, dynamic> json) {
+    pickId =json['pick_id'];
     pickOrder = json['pick_order'];
     userName = json['user_name'];
     locationName = json['location_name'];

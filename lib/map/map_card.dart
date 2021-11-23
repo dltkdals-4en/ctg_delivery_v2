@@ -81,7 +81,7 @@ class _MapCardState extends State<MapCard> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  TodoProvider.stateText(data['pick_state'], 'map'),
+                  CardUiProvider.stateText(data['pick_state'], 'map'),
                 ],
               ),
               const SizedBox(
